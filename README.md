@@ -1,5 +1,13 @@
 # Stock Price Prediction — Time-Series Forecasting Dashboard
 
+![Vanilla JS](https://img.shields.io/badge/dependencies-zero-34d399)
+![Engines](https://img.shields.io/badge/forecasting%20engines-5--hand%20written-22d3ee)
+![Data](https://img.shields.io/badge/market%20data-real%20OHLCV-f59e0b)
+![License](https://img.shields.io/badge/license-MIT-94a3b8)
+![CI](https://img.shields.io/badge/CI-syntax%20check-passing-10b981)
+
+![Dashboard — Model Scoreboard on real TCS data](docs/screenshots/06-research-tools.png)
+
 A beginner-friendly, single-page web dashboard for an academic machine-learning project:
 **"Stock Price Prediction Using Time-Series Forecasting Models."**
 
@@ -26,6 +34,9 @@ python -m http.server 8000
 # then open http://localhost:8000 in your browser
 ```
 
+**Live demo:** after enabling GitHub Pages (Settings → Pages → branch `main`),
+this dashboard is also available at `https://NVNATESH.github.io/Stock-Price-Prediction/`.
+
 ## How to Use (4 steps)
 
 1. **Pick a stock** — click TCS / RELIANCE / GOOGL. Everything updates instantly.
@@ -39,6 +50,15 @@ python -m http.server 8000
    reason and a 90 % confidence interval from its own tested errors.
 6. **Go deeper** — the scoreboard adds a Diebold–Mariano significance test, a
    monthly leadership timeline, and XGBoost feature-importance bars.
+
+**Recorded results on the real data** (last 63 sessions held out — full tables in
+the [report](docs/PROJECT_REPORT.md)):
+
+| Stock | Naive floor | Best model (RMSE) | Best direction |
+|---|---|---|---|
+| TCS | 46.18 | **SVR 45.73** | LSTM 60.3 % |
+| RELIANCE | 16.87 | **ARIMA 16.81** | SVR 55.6 % |
+| GOOGL | 7.68 | **Prophet 7.59** | ARIMA 52.4 % |
 
 New to the jargon? Click the **book icon** in the top bar (or press **G**) for a
 plain-English glossary of every term used.
