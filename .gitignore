@@ -1,0 +1,29 @@
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# ---- Office lock/temp files ----
+*.tmp
+.docx~*
+*.docx#*
+
+# ---- Editor / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Logs & caches ----
+*.log
+.cache/
+node_modules/
+
+# ---- Never commit local experiments ----
+gui-test-screenshots/
+*.local.html
+
+# ---- Large media (GitHub hard limit = 100 MB) ----
+# 1.2 GB demo recording stays local; share via Drive/OneDrive instead
+docs/ML_Final_Recording.mp4

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Price Prediction — Time-Series Forecasting Dashboard</title>
+  <meta name="description" content="Comparative study of ARIMA, Prophet, LSTM, XGBoost and SVR for stock price forecasting." />
+  <meta property="og:title" content="Stock Price Prediction — Time-Series Forecasting Dashboard" />
+  <meta property="og:description" content="Comparative study of ARIMA, Prophet, LSTM, XGBoost and SVR for stock price forecasting." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Stock Price Prediction Dashboard" />
+  <meta name="theme-color" content="#05070d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='8' y='10' width='5' height='14' rx='1' fill='%2334d399'/%3E%3Crect x='10' y='5' width='1.6' height='22' fill='%2334d399'/%3E%3Crect x='19' y='7' width='5' height='10' rx='1' fill='%23fb7185'/%3E%3Crect x='21' y='3' width='1.6' height='18' fill='%23fb7185'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=9" />
+</head>
+<body>
+
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-glow bg-glow--cyan" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--violet" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--center" aria-hidden="true"></div>
+
+  <!-- ================= NAV ================= -->
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#hero">
+        <span class="brand-mark">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round">
+            <path d="M7 6v12M7 9h3.5v7.5H7M17 4v13M17 6.5h3.5V13H17" opacity=".0"/>
+            <path d="M5 4v16M5 8h3v9H5zM16 3v18M16 6h3v8h-3z" fill="#67e8f9" stroke="none"/>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-name">STOCK PRICE PREDICTION</span>
+          <span class="brand-sub">TIME-SERIES FORECASTING</span>
+        </span>
+      </a>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="nav-links">
+        <a href="#hero">Overview</a>
+        <a href="#how">How It Works</a>
+        <a href="#market">Market Data</a>
+        <a href="#historical">History</a>
+        <a href="#models">Models</a>
+        <a href="#evaluation">Evaluation</a>
+        <a href="#backtest">Backtest</a>
+        <a href="#forecast">Forecast</a>
+      </nav>
+      <div class="nav-chip">COMPARATIVE STUDY · <b>5 FORECASTING MODELS</b></div>
+      <div class="nav-actions">
+        <button class="kbd-btn" id="guide-btn" aria-label="Plain-English Guide" title="Plain-English Guide (Press G)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </button>
+        <button class="kbd-btn" id="kbd-btn" aria-label="Keyboard Shortcuts" title="Shortcuts (Press ?)">
+          <kbd>?</kbd>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- ================= HERO ================= -->
+    <section id="hero" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badge"><span class="dot"></span> MACHINE LEARNING · TIME-SERIES FORECASTING</div>
+          <h1>STOCK PRICE<br />PREDICTION</h1>
+          <h2>Using Time-Series Forecasting Models</h2>
+          <div class="hero-models">
+            <span>ARIMA</span><span class="sep">•</span>
+            <span>PROPHET</span><span class="sep">•</span>
+            <span>LSTM</span><span class="sep">•</span>
+            <span>XGBOOST</span><span class="sep">•</span>
+            <span>SVR</span>
+          </div>
+          <p class="hero-desc">This dashboard predicts future stock prices using five machine-learning models implemented from scratch — pick a stock, train the models with one click, and see exactly how accurate each prediction is. Every technical term is explained in plain English.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="#market">
+              Explore Dashboard
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </a>
+            <a class="btn btn-ghost" href="#models">View Models</a>
+          </div>
+        </div>
+
+        <div class="hero-viz reveal">
+          <div class="viz-head">
+            <span class="viz-label">3D Market View</span>
+            <span class="viz-ticker"><b id="viz-ticker">TCS</b><span id="viz-price">—</span></span>
+          </div>
+          <canvas id="hero3d" aria-label="3D animated candlestick chart"></canvas>
+          <div class="viz-foot">
+            <span class="viz-legend">
+              <span class="lg-up"><i></i>BULLISH</span>
+              <span class="lg-dn"><i></i>BEARISH</span>
+              <span class="lg-fc"><i></i>CLOSE PATH</span>
+            </span>
+            <span>LAST 18 SESSIONS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span>SCROLL</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section id="how" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">START HERE</span>
+            <h2>How This Dashboard Works</h2>
+            <p class="sec-desc">Four simple steps take you from raw prices to a future forecast. No expertise needed — every technical term on this page is explained in plain English.</p>
+          </div>
+        </div>
+        <div class="how-grid">
+          <div class="card how-card reveal">
+            <div class="how-step">STEP 1</div>
+            <div class="how-ico">📈</div>
+            <h3>Pick a Stock</h3>
+            <p>Choose TCS, Reliance or Google. Every chart and number on this page instantly switches to that company.</p>
+          </div>
+          <div class="card how-card reveal" style="--d:.07s">
+            <div class="how-step">STEP 2</div>
+            <div class="how-ico">🧠</div>
+            <h3>Train the Models</h3>
+            <p>One click lets five different prediction models — from classic statistics to deep learning — learn from 2 years of price history.</p>
+          </div>
+          <div class="card how-card reveal" style="--d:.14s">
+            <div class="how-step">STEP 3</div>
+            <div class="how-ico">⚖️</div>
+            <h3>Compare Accuracy</h3>
+            <p>Each model is quizzed on the last 63 days it has never seen. A scoreboard shows which one made the smallest mistakes.</p>
+          </div>
+          <div class="card how-card reveal" style="--d:.21s">
+            <div class="how-step">STEP 4</div>
+            <div class="how-ico">🔮</div>
+            <h3>See the Forecast</h3>
+            <p>The winning approach projects the price 7, 30 or 90 days ahead, with a shaded band showing the honest range of outcomes.</p>
+          </div>
+        </div>
+        <div class="callout reveal">
+          <span class="callout-ico">💡</span>
+          <span>New to the terms? Click the <b>Guide</b> button in the top bar (or press <kbd>G</kbd>) for a plain-English glossary of every term used on this page.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 01 MARKET DATA ================= -->
+    <section id="market" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">01 · THE RAW DATA</span>
+            <h2>The Stock Data Models Learn From</h2>
+            <p class="sec-desc">Machine-learning models learn from history. For each trading day we record five numbers — <b>Open</b> (price when trading started), <b>High</b>, <b>Low</b>, <b>Close</b> (price when trading ended) — plus <b>Volume</b> (shares traded). The table shows the latest six days; <b>Export CSV</b> downloads all 504.</p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card span-4 reveal">
+            <div class="card-body">
+              <div class="card-title" style="margin-bottom:16px;">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg></span>
+                Data Sources
+              </div>
+              <div class="src-list">
+                <div class="src">
+                  <span class="s-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+                  <div><div class="s-name">Real Historical Prices</div><div class="s-role">MANUALLY EMBEDDED · DAILY OHLCV</div></div>
+                </div>
+                <div class="src">
+                  <span class="s-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></span>
+                  <div><div class="s-name">NSE</div><div class="s-role">NATIONAL STOCK EXCHANGE · INDIA</div></div>
+                </div>
+                <div class="src">
+                  <span class="s-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V6M4 6h16M20 6v14M4 20h16"/><path d="M9 12l3-3 3 3"/></svg></span>
+                  <div><div class="s-name">NASDAQ</div><div class="s-role">ALPHABET INC. · UNITED STATES</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card span-8 reveal" style="--d:.08s">
+            <div class="card-head">
+              <div class="card-title">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span>
+                Latest Session — Key Numbers
+              </div>
+              <span class="card-sub" id="m-stats-label">TCS · NSE</span>
+            </div>
+            <div class="card-body">
+              <div class="stat-grid" id="market-stats"><!-- stats injected --></div>
+              <div class="chart-note" style="margin-top:16px;">
+                <span>DATASET · REAL HISTORICAL PRICES · DAILY</span>
+                <span id="m-range-label">RANGE —</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card span-12 reveal" style="--d:.14s">
+            <div class="card-head">
+              <div class="card-title">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg></span>
+                OHLCV Records
+              </div>
+              <div class="sec-tools">
+                <span class="card-sub">LAST 6 SESSIONS</span>
+                <button class="btn btn-sm btn-ghost export-btn" id="export-ohlcv-btn" title="Export the full price history as CSV">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export CSV
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="tbl-wrap">
+                <table class="ohlcv" id="ohlcv-table">
+                  <thead>
+                    <tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Change</th><th>Volume</th></tr>
+                  </thead>
+                  <tbody><!-- rows injected --></tbody>
+                </table>
+              </div>
+              <div class="tbl-legend"><b>How to read it:</b> Open = price when trading started &nbsp;·&nbsp; High / Low = the day's extremes &nbsp;·&nbsp; Close = price at the end &nbsp;·&nbsp; Change = % move vs the previous day &nbsp;·&nbsp; Volume = shares traded.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 02 SELECT STOCK ================= -->
+    <section id="select" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 1 · PICK A STOCK</span>
+            <h2>Choose a Company</h2>
+            <p class="sec-desc">Click any card below. The entire dashboard — prices, charts, model scores and forecasts — instantly updates for that stock.</p>
+          </div>
+        </div>
+        <div class="stock-grid" id="stock-cards"><!-- cards injected --></div>
+      </div>
+    </section>
+
+    <!-- ================= 03 HISTORICAL ANALYSIS ================= -->
+    <section id="historical" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 2 · STUDY THE HISTORY</span>
+            <h2>Price History &amp; Trend Guides</h2>
+            <p class="sec-desc">The cyan line is the daily closing price, with trading volume underneath. Toggle the guides on the right: <b>MA20 / MA50</b> average the last 20 or 50 days to reveal the trend, <b>RSI</b> flags over-bought (above 70) or over-sold (below 30) conditions, and <b>MACD</b> tracks momentum shifts.</p>
+          </div>
+          <div class="sec-tools">
+            <div class="seg" id="indicator-seg">
+              <button class="ind-btn" data-ind="ma20" title="20-day average price — smooths out daily noise">MA20</button>
+              <button class="ind-btn" data-ind="ma50" title="50-day average price — shows the longer-term trend">MA50</button>
+              <button class="ind-btn" data-ind="rsi" title="Momentum score: above 70 = possibly over-bought, below 30 = possibly over-sold">RSI</button>
+              <button class="ind-btn" data-ind="macd" title="Momentum indicator — crossovers often hint at a trend change">MACD</button>
+            </div>
+            <div class="seg" id="range-seg">
+              <button data-range="126">6M</button>
+              <button data-range="252" class="active">1Y</button>
+              <button data-range="504">2Y</button>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal" id="hist-card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/></svg></span>
+              <span id="hist-title">TCS · Daily Close</span>
+            </div>
+            <div class="sec-tools">
+              <div class="legend" id="hist-legend">
+                <span class="lg" style="--c:#67e8f9"><i></i>Close</span>
+                <span class="lg lg-ma20" id="legend-ma20" style="--c:#fbbf24;display:none;"><i></i>MA20</span>
+                <span class="lg lg-ma50" id="legend-ma50" style="--c:#f472b6;display:none;"><i></i>MA50</span>
+                <span class="lg" style="--c:#475569"><i style="height:8px;border:0;background:rgba(148,163,184,.5);border-radius:2px;"></i>Volume</span>
+              </div>
+              <button class="chart-expand-btn" data-expand="hist-card" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box" id="hist-chart"></div>
+            <div class="oscillators-box" id="oscillators-box" style="display:none;margin-top:16px;">
+              <!-- RSI & MACD sub-charts injected here -->
+            </div>
+            <div class="chart-note">
+              <span id="hist-note">SOURCE · REAL HISTORICAL PRICES</span>
+              <span>HOVER FOR SESSION DETAIL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 04 FORECASTING MODELS ================= -->
+    <section id="models" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 3 · TRAIN THE MODELS</span>
+            <h2>Meet the 5 Prediction Models</h2>
+            <p class="sec-desc">Each card below is a different way of predicting tomorrow's price. Click <b>Run Model</b> to watch one train, or <b>Train All Models</b> for all five at once — then compare them on the scoreboard.</p>
+            <div class="sec-btn-row" style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+              <button class="btn btn-sm btn-ghost" id="train-all">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+                Train All Models
+              </button>
+              <button class="btn btn-sm btn-ghost" id="tune-models-btn" title="Adjust LSTM, ARIMA, XGBoost hyperparameters">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Tune Hyperparameters
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="model-grid" id="model-grid"><!-- model cards injected --></div>
+
+        <div class="card reveal" id="xgb-importance" style="margin-top:24px;">
+          <div class="card-body"><!-- XGBoost split-frequency importance injected --></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 05 ACTUAL VS PREDICTED ================= -->
+    <section id="compare" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 4 · CHECK THE FIT</span>
+            <h2>Actual vs Predicted — How Close Was It?</h2>
+            <p class="sec-desc">The white line is what really happened; the dashed coloured line is what the model predicted. The closer the two lines, the better that model understands the stock.</p>
+          </div>
+          <div class="sec-tools">
+            <div class="chips" id="cmp-chips"><!-- model chips injected --></div>
+          </div>
+        </div>
+        <div class="card reveal" id="cmp-card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M4 16l5-6 4 3 6-8"/></svg></span>
+              <span id="cmp-title">Actual vs LSTM · TCS</span>
+            </div>
+            <div class="sec-tools">
+              <div class="legend">
+                <span class="lg" style="--c:#e9edf5"><i></i>Actual</span>
+                <span class="lg dashed" id="cmp-legend-pred" style="--c:#22d3ee"><i></i>Predicted</span>
+              </div>
+              <button class="btn btn-sm btn-ghost export-btn" id="export-cmp-btn" title="Export Actual vs Predictions CSV">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+              <button class="chart-expand-btn" data-expand="cmp-card" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box" id="cmp-chart"></div>
+            <div class="chart-note">
+              <span id="cmp-note">TEST WINDOW · 63 SESSIONS · HELD-OUT</span>
+              <span id="cmp-metrics">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 06 MODEL EVALUATION ================= -->
+    <section id="evaluation" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 5 · THE SCOREBOARD</span>
+            <h2>Model Scoreboard — Who Predicted Best?</h2>
+            <p class="sec-desc">Every model is scored on the hidden test window (63 trading days). MSE and RMSE measure the average size of its mistakes — the smaller, the better. RMSE is in rupees/dollars, so you can read it as a typical per-day miss.</p>
+          </div>
+        </div>
+
+        <div class="eval-best reveal" id="eval-best"><!-- best model banner injected --></div>
+
+        <div class="card reveal" id="eval-stats" style="margin-bottom:20px;">
+          <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+            <div id="dm-test"><!-- Diebold-Mariano significance test injected --></div>
+            <div id="lead-strip" class="lead-strip"><!-- leadership timeline injected --></div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card span-6 reveal" style="--d:.06s">
+            <div class="card-head">
+              <div class="card-title">
+                <span class="ico" style="color:#a78bfa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V5M4 19h16"/><path d="M8 15v-4M12 15V8M16 15v-6M20 15v-2"/></svg></span>
+                Mean Squared Error
+              </div>
+              <span class="card-sub">MSE · LOWER IS BETTER</span>
+            </div>
+            <div class="card-body hbar-panel" id="eval-mse"><!-- bars injected --></div>
+          </div>
+          <div class="card span-6 reveal" style="--d:.12s">
+            <div class="card-head">
+              <div class="card-title">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V5M4 19h16"/><path d="M8 10l4 4 4-7"/></svg></span>
+                Root Mean Squared Error
+              </div>
+              <span class="card-sub">RMSE · LOWER IS BETTER</span>
+            </div>
+            <div class="card-body hbar-panel" id="eval-rmse"><!-- bars injected --></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 06B STRATEGY BACKTESTING ================= -->
+    <section id="backtest" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">BONUS · WOULD IT MAKE MONEY?</span>
+            <h2>Trading Simulation — Could You Profit From It?</h2>
+            <p class="sec-desc">Simple rule: if the model predicts tomorrow's price will rise, the simulation "buys" for that day; if it predicts a fall, it sits in cash. The green line shows how an initial ₹100 / $100 grows compared with simply buying and holding.</p>
+          </div>
+          <div class="sec-tools">
+            <div class="chips" id="bt-chips"><!-- backtest model selector chips injected --></div>
+          </div>
+        </div>
+
+        <div class="card reveal" id="bt-card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="ico" style="color:#10b981">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
+              <span id="bt-title">Strategy Equity Curve vs Buy &amp; Hold</span>
+            </div>
+            <div class="sec-tools">
+              <div class="legend">
+                <span class="lg" style="--c:#10b981"><i></i>Model Strategy</span>
+                <span class="lg dashed" style="--c:#94a3b8"><i></i>Buy &amp; Hold</span>
+              </div>
+              <button class="chart-expand-btn" data-expand="bt-card" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stat-grid" id="bt-stats" style="margin-bottom:20px;"><!-- backtest stats injected --></div>
+            <div class="chart-box" id="bt-chart"></div>
+            <div class="chart-note">
+              <span>TEST PERIOD · 63 SESSIONS · SIMULATED · NO FEES OR SLIPPAGE</span>
+              <span id="bt-summary-note">OUTPERFORMING BENCHMARK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 07 FORECAST HORIZON ================= -->
+    <section id="horizon" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 6 · HOW FAR AHEAD?</span>
+            <h2>How Far Ahead Should We Predict?</h2>
+            <p class="sec-desc">Short horizons are more reliable; long horizons are more uncertain. The forecast chart below follows this choice.</p>
+          </div>
+          <div class="sec-tools">
+            <div class="seg" id="horizon-seg">
+              <button data-h="7">7 DAYS · QUICK</button>
+              <button data-h="30" class="active">30 DAYS · BALANCED</button>
+              <button data-h="90">90 DAYS · LONG TERM</button>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal">
+          <div class="card-body">
+            <div class="hz-grid" id="hz-stats"><!-- stats injected --></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 08 FUTURE FORECAST ================= -->
+    <section id="forecast" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 7 · THE FORECAST</span>
+            <h2 id="fc-heading">30-Day Price Forecast</h2>
+            <p class="sec-desc">The dashed line is the projected price path; the shaded band is the likely range. The further into the future, the wider (and less certain) the band becomes.</p>
+          </div>
+          <div class="sec-tools">
+            <div class="seg" id="fc-view-seg">
+              <button data-view="forecast" class="active" title="Projected Close Price Path">PRICE FORECAST</button>
+              <button data-view="montecarlo" title="Run 50 random what-if futures to see the full range of possible outcomes">🎲 MONTE CARLO · 50 FUTURES</button>
+            </div>
+            <div class="legend">
+              <span class="lg" style="--c:#e9edf5"><i></i>History</span>
+              <span class="lg dashed" id="fc-legend-line" style="--c:#f59e0b"><i></i>Forecast</span>
+              <span class="lg band"><i></i>Confidence Band</span>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal" id="fc-card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
+              <span id="fc-title">TCS · Projected Close</span>
+            </div>
+            <div class="sec-tools">
+              <span class="card-sub" id="fc-model-note">BEST MODEL · LSTM</span>
+              <button class="btn btn-sm btn-ghost export-btn" id="export-fc-btn" title="Export Forecast CSV">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+              <button class="chart-expand-btn" data-expand="fc-card" aria-label="Toggle Fullscreen" title="Toggle Fullscreen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box" id="fc-chart"></div>
+            <div class="stat-grid" id="mc-risk-grid" style="display:none;margin-top:16px;">
+              <!-- Monte Carlo Value-at-Risk stats injected here -->
+            </div>
+            <div class="chart-note">
+              <span id="fc-note">HISTORY · LAST 60 SESSIONS</span>
+              <span>SHADED AREA · LIKELY PRICE RANGE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 08B PICK A DAY ================= -->
+    <section id="date-predict" class="dash">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div>
+            <span class="kicker">STEP 8 · PICK A DAY</span>
+            <h2>Choose Any Future Day — Every Model Answers</h2>
+            <p class="sec-desc">Select a date below and all five models will project the stock price for <b>that exact day</b>, each with its own plain-English reason. Pick a trading day within the next six months.</p>
+          </div>
+        </div>
+        <div class="card reveal" id="date-card">
+          <div class="card-body">
+            <div class="date-row">
+              <label class="date-label" for="target-date">Target day</label>
+              <input type="date" id="target-date" />
+              <button class="btn btn-sm btn-primary" id="predict-date-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                Predict for this day
+              </button>
+              <span class="card-sub" id="date-status">PICK A TRADING DAY</span>
+            </div>
+            <div id="date-results" style="margin-top:16px;"></div>
+            <div class="chart-note">
+              <span>ALL 5 MODELS · WEEKENDS SKIPPED · EXCHANGE HOLIDAYS NOT ADJUSTED</span>
+              <span id="date-note">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="container foot-inner">
+      <div class="foot-title">STOCK PRICE PREDICTION USING TIME-SERIES FORECASTING MODELS</div>
+      <div class="foot-sub">COMPARATIVE STUDY OF ARIMA · PROPHET · LSTM · XGBOOST · SVR</div>
+      <div class="foot-models">
+        <span>ARIMA</span><span>PROPHET</span><span>LSTM</span><span>XGBOOST</span><span>SVR</span>
+      </div>
+      <div class="foot-note">Academic project dashboard · Market data: real historical prices (manually embedded · source: Yahoo Finance)</div>
+    </div>
+  </footer>
+
+  <!-- ================= SHORTCUTS MODAL ================= -->
+  <div class="modal" id="kbd-modal" aria-hidden="true" role="dialog" aria-labelledby="kbd-modal-title">
+    <div class="modal-backdrop" id="kbd-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title" id="kbd-modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10"/></svg>
+          Keyboard Shortcuts
+        </div>
+        <button class="modal-close" id="kbd-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="kbd-list">
+          <div class="kbd-item"><span class="kbd-desc">Select TCS</span><kbd>1</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Select RELIANCE</span><kbd>2</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Select GOOGL</span><kbd>3</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Train All Models</span><kbd>T</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Tune Hyperparameters</span><kbd>H</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Toggle Moving Averages (MA20/50)</span><kbd>M</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Toggle Active Chart Fullscreen</span><kbd>F</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Print / Save Project Report</span><kbd>P</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Open Plain-English Guide</span><kbd>G</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Close Modal / Exit Fullscreen</span><kbd>Esc</kbd></div>
+          <div class="kbd-item"><span class="kbd-desc">Open This Help Cheat Sheet</span><kbd>?</kbd></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HYPERPARAMETER TUNER MODAL ================= -->
+  <div class="modal" id="tuner-modal" aria-hidden="true" role="dialog" aria-labelledby="tuner-modal-title">
+    <div class="modal-backdrop" id="tuner-backdrop"></div>
+    <div class="modal-card tuner-card">
+      <div class="modal-head">
+        <div class="modal-title" id="tuner-modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Hyperparameter Tuning Studio
+        </div>
+        <button class="modal-close" id="tuner-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="sec-desc" style="margin-top:0;margin-bottom:18px;">
+          Adjust how the models learn — more epochs means more practice rounds, the learning rate is the step size, and tree depth controls how complex patterns can be. Click Apply to re-score every model instantly.
+        </p>
+        <div class="tuner-sections">
+          <!-- LSTM Tuning -->
+          <div class="tuner-block">
+            <div class="tb-head">
+              <span class="mc-tag" style="color:#22d3ee;margin:0;">LSTM</span>
+              <b>Deep Recurrent Network</b>
+            </div>
+            <div class="tb-row">
+              <label>Training Epochs: <span id="v-lstm-epochs">50</span></label>
+              <input type="range" id="t-lstm-epochs" min="15" max="100" step="5" value="50" />
+            </div>
+            <div class="tb-row">
+              <label>Lookback Window: <span id="v-lstm-lookback">30</span> sessions</label>
+              <input type="range" id="t-lstm-lookback" min="10" max="60" step="5" value="30" />
+            </div>
+            <div class="tb-row">
+              <label>Learning Rate (&eta;): <span id="v-lstm-lr">0.005</span></label>
+              <input type="range" id="t-lstm-lr" min="1" max="20" step="1" value="5" />
+            </div>
+          </div>
+
+          <!-- ARIMA Tuning -->
+          <div class="tuner-block">
+            <div class="tb-head">
+              <span class="mc-tag" style="color:#38bdf8;margin:0;">ARIMA</span>
+              <b>Autoregressive Order (p, d, q)</b>
+            </div>
+            <div class="tb-row">
+              <label>AR Lag Order (p): <span id="v-arima-p">2</span></label>
+              <input type="range" id="t-arima-p" min="1" max="5" step="1" value="2" />
+            </div>
+            <div class="tb-row">
+              <label>Differencing Degree (d): <span id="v-arima-d">1</span></label>
+              <input type="range" id="t-arima-d" min="0" max="2" step="1" value="1" />
+            </div>
+            <div class="tb-row">
+              <label>MA Window (q): <span id="v-arima-q">2</span></label>
+              <input type="range" id="t-arima-q" min="0" max="4" step="1" value="2" />
+            </div>
+          </div>
+
+          <!-- XGBoost Tuning -->
+          <div class="tuner-block">
+            <div class="tb-head">
+              <span class="mc-tag" style="color:#34d399;margin:0;">XGBoost</span>
+              <b>Gradient Boosted Trees</b>
+            </div>
+            <div class="tb-row">
+              <label>Max Tree Depth: <span id="v-xgb-depth">6</span></label>
+              <input type="range" id="t-xgb-depth" min="2" max="10" step="1" value="6" />
+            </div>
+            <div class="tb-row">
+              <label>Subsample Ratio: <span id="v-xgb-sub">0.80</span></label>
+              <input type="range" id="t-xgb-sub" min="50" max="100" step="5" value="80" />
+            </div>
+          </div>
+        </div>
+
+        <div class="tuner-foot" style="margin-top:20px;display:flex;justify-content:flex-end;gap:12px;">
+          <button class="btn btn-sm btn-ghost" id="tuner-reset">Reset to Defaults</button>
+          <button class="btn btn-sm btn-primary" id="tuner-apply">Apply &amp; Retune Models</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PLAIN-ENGLISH GUIDE MODAL ================= -->
+  <div class="modal" id="guide-modal" aria-hidden="true" role="dialog" aria-labelledby="guide-modal-title">
+    <div class="modal-backdrop" id="guide-backdrop"></div>
+    <div class="modal-card guide-card">
+      <div class="modal-head">
+        <div class="modal-title" id="guide-modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Plain-English Guide
+        </div>
+        <button class="modal-close" id="guide-close" aria-label="Close guide">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="guide-intro">Every term used on this dashboard, explained without jargon.</p>
+        <dl class="guide-list">
+          <div class="guide-item"><dt>Open / High / Low / Close</dt><dd>The four prices of a trading day: where it started, its peak, its low, and where it ended.</dd></div>
+          <div class="guide-item"><dt>Volume</dt><dd>How many shares were traded that day. Big volume = lots of buying and selling interest.</dd></div>
+          <div class="guide-item"><dt>MA20 / MA50</dt><dd>The average price of the last 20 / 50 days. Smooths out daily noise so the underlying trend is easier to see.</dd></div>
+          <div class="guide-item"><dt>RSI</dt><dd>A 0–100 momentum score. Above 70: possibly over-bought (due for a dip). Below 30: possibly over-sold (due for a bounce).</dd></div>
+          <div class="guide-item"><dt>MACD</dt><dd>Compares short-term vs long-term momentum. When its lines cross, a trend change may be coming.</dd></div>
+          <div class="guide-item"><dt>ARIMA</dt><dd>A classical statistics model that predicts the next price from recent prices and recent errors.</dd></div>
+          <div class="guide-item"><dt>Prophet</dt><dd>A model that splits price into trend + repeating seasonal patterns, then extends each piece forward.</dd></div>
+          <div class="guide-item"><dt>LSTM</dt><dd>A deep-learning network with built-in memory, designed to learn patterns in sequences — like prices.</dd></div>
+          <div class="guide-item"><dt>XGBoost</dt><dd>A team of small decision trees that, combined, can learn complex non-linear patterns.</dd></div>
+          <div class="guide-item"><dt>SVR</dt><dd>Support Vector Regression — fits a smooth curve through the data while tolerating small errors.</dd></div>
+          <div class="guide-item"><dt>Test Window</dt><dd>The last 63 trading days, kept hidden from training — a fair final exam for every model.</dd></div>
+          <div class="guide-item"><dt>MSE / RMSE</dt><dd>The average size of a model's prediction mistakes (lower = better). RMSE is in price units, e.g. "off by ₹24 per day".</dd></div>
+          <div class="guide-item"><dt>Confidence Band</dt><dd>The shaded range where the price will probably stay. Wider = less certain.</dd></div>
+          <div class="guide-item"><dt>Monte Carlo</dt><dd>Runs 50 random "what-if" futures to show the full range of possible outcomes, good and bad.</dd></div>
+          <div class="guide-item"><dt>VaR 95%</dt><dd>Value at Risk: the loss that should only be exceeded 5% of the time.</dd></div>
+          <div class="guide-item"><dt>Sharpe Ratio</dt><dd>Return earned per unit of risk taken. Above 1 is good; above 2 is excellent.</dd></div>
+          <div class="guide-item"><dt>Buy &amp; Hold</dt><dd>The do-nothing benchmark: buy once and wait. A strategy must beat this to be useful.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip" role="tooltip"></div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner">
+      <div class="loading-ring"></div>
+      <span class="loading-text">LOADING DASHBOARD</span>
+    </div>
+  </div>
+
+  <button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- ============ REAL MARKET DATA (manually embedded history) ============ -->
+  <script src="data/market-data.js?v=9"></script>
+
+  <!-- ============ PREDICTION ALGORITHMS (loaded before the UI) ============ -->
+  <script src="algorithms/common.js?v=9"></script>
+  <script src="algorithms/arima.js?v=9"></script>
+  <script src="algorithms/prophet.js?v=9"></script>
+  <script src="algorithms/lstm.js?v=9"></script>
+  <script src="algorithms/xgboost.js?v=9"></script>
+  <script src="algorithms/svr.js?v=9"></script>
+
+  <script src="assets/js/app.js?v=9"></script>
+</body>
+</html>
